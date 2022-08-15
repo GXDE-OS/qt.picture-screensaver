@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Name=picture-screensaver-auto-config
+Name[zh_CN]=(自动配置)默认为图片屏保
+Comment=配置 picture-screensaver 的自动
+Type=Application
+Exec=/usr/share/picture-screensaver/dde-default-screensaver.sh 
+Icon=/usr/share/picture-screensaver/icon.png
+Categories=Utility
+
+# Generated from the DesktopGenerater component of the z-Tools toolkit

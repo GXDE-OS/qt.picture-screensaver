@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Name=picture-screensaver-config-preview-panel
+Name[zh_CN]=图片屏保配置预览面板
+Comment=配置 picture-screensaver 的工作模式
+Type=Application
+Exec=/usr/share/picture-screensaver/picture-screensaver-config-panel
+Icon=/usr/share/picture-screensaver/icon.png
+Categories=Utility
+
+# Generated from the DesktopGenerater component of the z-Tools toolkit

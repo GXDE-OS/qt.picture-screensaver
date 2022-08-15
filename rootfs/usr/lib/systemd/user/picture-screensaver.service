@@ -1,0 +1,7 @@
+[Unit]
+Description=Picture ScreenSaverAutoConfig
+#PartOf=graphical-session.target
+
+[Service]
+ExecStart=/usr/share/picture-screensaver/dde-default-screensaver.sh
+Restart=on-failure
