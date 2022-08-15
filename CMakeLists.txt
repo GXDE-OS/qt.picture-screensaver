@@ -19,7 +19,6 @@ target_link_qt5(ScreenSaverConfig)
 spark_add_libraries_path(ScreenSaverImage
     src/ScreenSaverImage)
 target_link_ScreenSaverConfig(ScreenSaverImage)
-target_link_dtk(ScreenSaverImage)
 
 # 3. 主屏保程序，提供主要的屏保状态执行效果，依赖 ScreenSaverImage 提供的预览图片功能
 spark_add_executable_path(${PROJECT_NAME} 
