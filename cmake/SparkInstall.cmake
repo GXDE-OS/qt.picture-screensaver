@@ -24,3 +24,7 @@ install(TARGETS
     DESTINATION "share/${PROJECT_NAME}"
 )
 
+
+# import DebPackage
+find_package(DebPackage PATHS ${CMAKE_SOURCE_DIR})
+add_package_descript(cmake/package-deb.descript)

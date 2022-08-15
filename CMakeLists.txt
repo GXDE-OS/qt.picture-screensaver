@@ -34,3 +34,4 @@ spark_add_executable_path(picture-screensaver-config-panel
     ${QRCS})
 target_link_ScreenSaverImage(picture-screensaver-config-panel)
 
+include(cmake/SparkInstall.cmake)
