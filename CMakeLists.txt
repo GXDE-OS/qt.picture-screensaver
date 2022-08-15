@@ -7,3 +7,10 @@ include(cmake/SparkEnvConfig.cmake)         # 设置一些有关QT构建的开�
 include(cmake/SparkFindQt5Config.cmake)     # 提供了 target_link_qt5 用于目标链接 qt5 的库
 include(cmake/SparkFindDtkConfig.cmake)     # 提供了 target_link_dtk 用于目标链接 dtk 的库
 include(cmake/SparkMacrosConfig.cmake)      # 声明了一些 spark_ 开头的 macro 宏
+
+set(QRCS resources/sources.qrc)
+
+# 1. 核心配置库，拥有操作配置文件以及提供读取图片文件的功能
+spark_add_libraries_path(ScreenSaverConfig
+    src/ScreenSaverConfig)
+target_link_qt5(ScreenSaverConfig)
