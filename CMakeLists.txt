@@ -25,3 +25,12 @@ target_link_dtk(ScreenSaverImage)
 spark_add_executable_path(${PROJECT_NAME} 
     src ${QRCS})
 target_link_ScreenSaverImage(${PROJECT_NAME})
+
+# 4. 配置面板程序，提供配置屏保的面板，以及预览屏保的功能
+    # 依赖 ScreenSaverImage 提供的预览图片功能
+    # 间接依赖 ScreenSaverConfig 对配置文件的处理功能
+spark_add_executable_path(picture-screensaver-config-panel 
+    tools/ConfigPanel
+    ${QRCS})
+target_link_ScreenSaverImage(picture-screensaver-config-panel)
+
