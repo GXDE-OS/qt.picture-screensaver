@@ -7,7 +7,7 @@ function(target_link_qt5 NAME)
         Qt5::Core
         Qt5::Widgets
         Qt5::Network
-        Qt::Gui)
+        Qt5::Gui)
 endfunction(target_link_qt5 NAME)
 
 function(target_link_qt5_concurrent)
