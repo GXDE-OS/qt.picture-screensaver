@@ -4,7 +4,8 @@ all:
 	cd build && make -j12
 
 run: all
-	exec $(shell find build/ -maxdepth 1 -type f -executable)
+	# exec $(shell find build/ -maxdepth 1 -type f -executable)
+	exec build/picture-screensaver-config-panel
 
 release:
 	mkdir -p build
