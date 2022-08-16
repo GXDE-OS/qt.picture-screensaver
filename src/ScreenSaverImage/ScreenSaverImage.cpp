@@ -46,6 +46,7 @@ ScreenSaverImage::ScreenSaverImage(QWidget *parent) : QWidget(parent)
 
     //信号和槽
     connect(timeTimer, &QTimer::timeout, this, [=](){
+        number->setGeometry(getTimerRect());
         number->show();
         switch(state){
         case TopLeft:
@@ -92,6 +93,30 @@ void ScreenSaverImage::showNext()
     nextPixmap = privateData->nextImage();
 
     animation->start();
+}
+
+QRect ScreenSaverImage::getTimerRect()
+{
+    int w = privateData->getKeyValueInt("tickGeometry/Width");
+    int h = privateData->getKeyValueInt("tickGeometry/Height");
+    if (w <= 0 || h <= 0) {
+        w = 140;
+        h = 40;
+        auto a = QRect(0,0, w,h);
+        setTimerRect(a);
+    }
+
+    return QRect(0,0, w,h);
+}
+
+void ScreenSaverImage::setTimerRect(const QRect &value)
+{
+    timerRect = value;
+
+    int w = value.width();
+    int h = value.height();
+    privateData->setKeyValueInt("tickGeometry/Width", w);
+    privateData->setKeyValueInt("tickGeometry/Height", h);
 }
 
 void ScreenSaverImage::configChanged()

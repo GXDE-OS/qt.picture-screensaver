@@ -13,8 +13,10 @@
 #include <QComboBox>
 #include <QLCDNumber>
 
+#include <QColorDialog>
 #include <QPaintEvent>
 #include <QPropertyAnimation>
+#include <QRgb>
 #include <QSlider>
 #include <ScreenSaveImage>
 #include <ScreenSaverConfig>
@@ -66,7 +68,11 @@ ConfigPanelWindow::ConfigPanelWindow(QWidget *parent) : QWidget(parent)
 
     index++;
     boxLayout->addWidget(new QLabel("时钟位置:"), index, 0);
-    boxLayout->addWidget(comb, index, 1,1,2);
+    boxLayout->addWidget(comb, index, 1);
+
+    QSlider *sliderSize = new QSlider(Qt::Horizontal);
+    sliderSize->setRange(1,300);
+    boxLayout->addWidget(sliderSize, index, 2);
 
     QGroupBox *previewBox = new QGroupBox("屏保预览");
     QVBoxLayout *previewBoxLayout = new QVBoxLayout(previewBox);
@@ -82,6 +88,14 @@ ConfigPanelWindow::ConfigPanelWindow(QWidget *parent) : QWidget(parent)
     widget->setMinimumSize(700, 550);
     widget->setWindowOpacity(0);
     widget->show();
+
+    QObject::connect(sliderSize, &QAbstractSlider::valueChanged, widget, [=](int val){
+        int w = 140 + (val *(140/40));
+        int h = 40 + val;
+
+        ssi->setTimerRect(QRect(0,0,w,h));
+    });
+    sliderSize->setValue(ssi->getTimerRect().height() - 40);
 
     inputDirEdit->setText(ScreenSaverConfig().getImageDirPath());
     QObject::connect(inputDirEdit, &QLineEdit::textChanged, widget, [=](const QString &path){
@@ -106,6 +120,7 @@ ConfigPanelWindow::ConfigPanelWindow(QWidget *parent) : QWidget(parent)
         ssi->configChanged();
         sliderSpeedLab->setText(QString("当前速度: %1 秒").arg(val/1000.0));
     });
+
     slider->setValue(ScreenSaverConfig().getTimeout());
 
     QPropertyAnimation *animation = new QPropertyAnimation(widget, "windowOpacity");

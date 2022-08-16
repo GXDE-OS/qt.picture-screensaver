@@ -35,6 +35,9 @@ public:
     void timerStateSet(int v);
     int timerStateGet();
 
+    QRect getTimerRect();
+    void setTimerRect(const QRect &value);
+
 private slots:
     void showNext();
 
@@ -45,6 +48,8 @@ private:
 
     QPixmap currentPixmap;
     QPixmap nextPixmap;
+
+    QRect timerRect;
 
     // QWidget interface
 protected:
