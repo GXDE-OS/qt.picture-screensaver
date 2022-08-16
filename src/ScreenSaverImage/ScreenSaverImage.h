@@ -38,6 +38,9 @@ public:
     QRect getTimerRect();
     void setTimerRect(const QRect &value);
 
+    QColor getTimerColor() const;
+    void setTimerColor(const QColor &value);
+
 private slots:
     void showNext();
 
@@ -50,6 +53,7 @@ private:
     QPixmap nextPixmap;
 
     QRect timerRect;
+    QColor timerColor;
 
     // QWidget interface
 protected:

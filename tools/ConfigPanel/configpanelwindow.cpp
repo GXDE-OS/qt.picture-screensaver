@@ -72,7 +72,12 @@ ConfigPanelWindow::ConfigPanelWindow(QWidget *parent) : QWidget(parent)
 
     QSlider *sliderSize = new QSlider(Qt::Horizontal);
     sliderSize->setRange(1,300);
-    boxLayout->addWidget(sliderSize, index, 2);
+    QPushButton *colorBtn = new QPushButton;
+
+    QHBoxLayout *sliderLayout = new QHBoxLayout;
+    sliderLayout->addWidget(sliderSize);
+    sliderLayout->addWidget(colorBtn);
+    boxLayout->addLayout(sliderLayout, index, 2);
 
     QGroupBox *previewBox = new QGroupBox("屏保预览");
     QVBoxLayout *previewBoxLayout = new QVBoxLayout(previewBox);
@@ -92,10 +97,27 @@ ConfigPanelWindow::ConfigPanelWindow(QWidget *parent) : QWidget(parent)
     QObject::connect(sliderSize, &QAbstractSlider::valueChanged, widget, [=](int val){
         int w = 140 + (val *(140/40));
         int h = 40 + val;
-
         ssi->setTimerRect(QRect(0,0,w,h));
     });
     sliderSize->setValue(ssi->getTimerRect().height() - 40);
+
+    QObject::connect(colorBtn, &QPushButton::clicked, widget, [=](){
+        QColor defaultColor = QColor("#008B8B");
+            QColorDialog colorDlg(this);
+            colorDlg.setGeometry(200,200,300,280);//此句注释掉之后会再程序运行的时候提示信息
+            colorDlg.setWindowTitle(QStringLiteral("颜色选择对话框"));
+            colorDlg.setCurrentColor(defaultColor);
+            if (colorDlg.exec() == QColorDialog::Accepted) {
+                QColor color = colorDlg.selectedColor();
+                colorBtn->setStyleSheet(QString("background-color: %1").arg(color.name()));
+                QTextStream(stdout) << QString("color: %1").arg(color.name()) << "\n";
+                ssi->setTimerColor(color);
+//                qDebug()<<QStringLiteral("选择的颜色:红")<<m_color.red()<<QStringLiteral("绿：")<<m_color.green()<<QStringLiteral("蓝：")<<m_color.blue();
+            }
+
+    });
+    colorBtn->setStyleSheet(QString("background-color: %1").arg(ssi->getTimerColor().name()));
+
 
     inputDirEdit->setText(ScreenSaverConfig().getImageDirPath());
     QObject::connect(inputDirEdit, &QLineEdit::textChanged, widget, [=](const QString &path){

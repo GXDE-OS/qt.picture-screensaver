@@ -37,6 +37,7 @@ ScreenSaverImage::ScreenSaverImage(QWidget *parent) : QWidget(parent)
     number->hide();
     number->setFrameShape(number->NoFrame);
     number->setGeometry(0,0,140,40);
+    number->setSegmentStyle(QLCDNumber::Flat);
 
     QTimer *timeTimer = new QTimer();
     //设置定时器每个多少毫秒发送一个timeout()信号
@@ -47,6 +48,7 @@ ScreenSaverImage::ScreenSaverImage(QWidget *parent) : QWidget(parent)
     //信号和槽
     connect(timeTimer, &QTimer::timeout, this, [=](){
         number->setGeometry(getTimerRect());
+        number->setStyleSheet(QString("color: %1").arg(getTimerColor().name()));
         number->show();
         switch(state){
         case TopLeft:
@@ -93,6 +95,20 @@ void ScreenSaverImage::showNext()
     nextPixmap = privateData->nextImage();
 
     animation->start();
+}
+
+QColor ScreenSaverImage::getTimerColor() const
+{
+    QString value = privateData->getKeyValueString("tickColor/value");
+    if (value.isEmpty()) {
+        value = "#414D68";
+    }
+    return QColor(value);
+}
+
+void ScreenSaverImage::setTimerColor(const QColor &value)
+{
+    privateData->setKeyValueString("tickColor/value",value.name());
 }
 
 QRect ScreenSaverImage::getTimerRect()
