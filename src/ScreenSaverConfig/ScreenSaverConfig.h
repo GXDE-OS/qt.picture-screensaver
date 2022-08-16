@@ -25,15 +25,17 @@ public:
     void setOrder(bool order);
     bool getOrder();
 
-    void setKeyValueInt(QString key, int val);
-    int getKeyValueInt(QString key);
-
     void reloadFilePaths();
     void loadFilePaths();
 
     QPixmap nextImage();
     QPixmap nextRandomImage();
 
+    int getKeyValueInt(QString key);
+    void setKeyValueInt(QString key, int val);
+
+    QString getKeyValueString(QString key);
+    void setKeyValueString(QString key, QString value);
 
 private:
     int indexImagePath = 0;

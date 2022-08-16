@@ -56,16 +56,6 @@ bool ScreenSaverConfig::getOrder() {
     return m_config.value("image/order").toBool();
 }
 
-void ScreenSaverConfig::setKeyValueInt(QString key, int val)
-{
-    m_config.setValue(key, val);
-}
-
-int ScreenSaverConfig::getKeyValueInt(QString key)
-{
-    return m_config.value(key).toInt();
-}
-
 void ScreenSaverConfig::reloadFilePaths()
 {
     filePaths.clear();
@@ -150,4 +140,24 @@ QPixmap ScreenSaverConfig::nextRandomImage()
     }
 
     return nextImage();
+}
+
+int ScreenSaverConfig::getKeyValueInt(QString key)
+{
+    return m_config.value(key).toInt();
+}
+
+void ScreenSaverConfig::setKeyValueInt(QString key, int val)
+{
+    m_config.setValue(key, val);
+}
+
+QString ScreenSaverConfig::getKeyValueString(QString key)
+{
+    return m_config.value(key).toString();
+}
+
+void ScreenSaverConfig::setKeyValueString(QString key, QString value)
+{
+    m_config.setValue(key, value);
 }
