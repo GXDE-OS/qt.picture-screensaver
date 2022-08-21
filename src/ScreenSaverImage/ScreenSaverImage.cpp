@@ -8,13 +8,18 @@
 #include <QVBoxLayout>
 #include <qpainter.h>
 
+#include <QGraphicsDropShadowEffect>
 #include <QLCDNumber>
 #include <QTime>
 #include <ScreenSaverConfig>
+#include <timedatewidget.h>
 
 ScreenSaverImage::ScreenSaverImage(QWidget *parent) : QWidget(parent)
   ,timer(new QTimer)
   ,privateData(new ScreenSaverConfig)
+  ,timerState(TimerState::Center)
+  ,timeShadowDeep(privateData->getKeyValueInt(TICK_SHADOW_DEEP))
+  ,timeShadowBlurRadius(privateData->getKeyValueInt(TICK_SHADOW_BLUR))
 {
 
     animation = new QPropertyAnimation(this, "ImageOpacity");
@@ -30,58 +35,57 @@ ScreenSaverImage::ScreenSaverImage(QWidget *parent) : QWidget(parent)
     connect(animation, SIGNAL(finished()), timer, SLOT(start()));
 
     showNext();
-    // setMinimumSize(650, 400);
 
-    number = new QLCDNumber(this);
-    number->setDigitCount(8);
-    number->hide();
-    number->setFrameShape(number->NoFrame);
-    number->setGeometry(0,0,140,40);
-    number->setSegmentStyle(QLCDNumber::Flat);
+    m_timeDateWidget = new TimeDateWidget(this);
+    m_timeDateWidget->hide();
+    m_timeDateWidget->setShadowDeep(timeShadowDeep);
+    m_timeDateWidget->setShadowBlurRadius(timeShadowBlurRadius);
+
+//    connect(m_timeDateWidget, &TimeDateWidget::onShadowDeepChanged, this, [=](int val){
+//        privateData->setKeyValueInt(TICK_SHADOW_DEEP, val);
+//    });
+//    connect(m_timeDateWidget, &TimeDateWidget::onShadowBlurChanged, this, [=](int val){
+//        privateData->setKeyValueInt(TICK_SHADOW_BLUR, val);
+//    });
 
     QTimer *timeTimer = new QTimer();
-    //设置定时器每个多少毫秒发送一个timeout()信号
-    timeTimer->setInterval(1000);
-    //启动定时器
-    timeTimer->start();
+    timeTimer->start(1000);
 
     //信号和槽
     connect(timeTimer, &QTimer::timeout, this, [=](){
-        number->setGeometry(getTimerRect());
-        number->setStyleSheet(QString("color: %1").arg(getTimerColor().name()));
-        number->show();
-        switch(state){
+//        m_timeDateWidget->setFontSize(getTimerRect());
+        m_timeDateWidget->setStyleSheet(QString("color: %1").arg(getTimerColor().name()));
+        m_timeDateWidget->show();
+
+        switch(timerState){
         case TopLeft:
-            number->move(0, 0);
+            m_timeDateWidget->move(0, 0);
             break;
         case TopCenter:
-            number->move((this->width() - number->width())/2, 0);
+            m_timeDateWidget->move((this->width() - m_timeDateWidget->width())/2, 0);
             break;
         case TopRight:
-            number->move(this->width() - number->width(), 0);
+            m_timeDateWidget->move(this->width() - m_timeDateWidget->width(), 0);
             break;
         case Left:
-            number->move(0, (this->height() - number->height())/2);
+            m_timeDateWidget->move(0, (this->height() - m_timeDateWidget->height())/2);
             break;
         case Center:
-            number->move((this->width() - number->width())/2, (this->height() - number->height())/2);
+            m_timeDateWidget->move((this->width() - m_timeDateWidget->width())/2, (this->height() - m_timeDateWidget->height())/2);
             break;
         case Right:
-            number->move(this->width() - number->width(), (this->height() - number->height())/2);
+            m_timeDateWidget->move(this->width() - m_timeDateWidget->width(), (this->height() - m_timeDateWidget->height())/2);
             break;
         case BottomLeft:
-            number->move(0, this->height() - number->height());
+            m_timeDateWidget->move(0, this->height() - m_timeDateWidget->height());
             break;
         case BottomCenter:
-            number->move((this->width() - number->width())/2, this->height() - number->height());
+            m_timeDateWidget->move((this->width() - m_timeDateWidget->width())/2, this->height() - m_timeDateWidget->height());
             break;
         case BottomRight:
-            number->move(this->width() - number->width(), this->height() - number->height());
+            m_timeDateWidget->move(this->width() - m_timeDateWidget->width(), this->height() - m_timeDateWidget->height());
             break;
         }
-        // number->move(this->width() - number->width(), this->height() - number->height());
-        QTime time = QTime::currentTime();
-        number->display(time.toString("hh:mm:ss"));
     });
 
     timerStateGet();
@@ -97,9 +101,43 @@ void ScreenSaverImage::showNext()
     animation->start();
 }
 
+int ScreenSaverImage::getTimeShadowDeep() const
+{
+    int value = privateData->getKeyValueInt(TICK_SHADOW_DEEP);
+    return value;
+}
+
+void ScreenSaverImage::setTimeShadowDeep(int value)
+{
+    timeShadowDeep = value;
+    m_timeDateWidget->setShadowDeep(value);
+}
+
+int ScreenSaverImage::getTimeShadowBlurRadius() const
+{
+    int value = privateData->getKeyValueInt(TICK_SHADOW_BLUR);
+    return value;
+}
+
+void ScreenSaverImage::setTimeShadowBlurRadius(int value)
+{
+    timeShadowBlurRadius = value;
+    m_timeDateWidget->setShadowBlurRadius(value);
+}
+
+TimeDateWidget *ScreenSaverImage::getTimeDate() const
+{
+    return m_timeDateWidget;
+}
+
+void ScreenSaverImage::setTimeDate(TimeDateWidget *timeDateWidget)
+{
+    m_timeDateWidget = timeDateWidget;
+}
+
 QColor ScreenSaverImage::getTimerColor() const
 {
-    QString value = privateData->getKeyValueString("tickColor/value");
+    QString value = privateData->getKeyValueString(TICK_COLOR);
     if (value.isEmpty()) {
         value = "#414D68";
     }
@@ -108,31 +146,18 @@ QColor ScreenSaverImage::getTimerColor() const
 
 void ScreenSaverImage::setTimerColor(const QColor &value)
 {
-    privateData->setKeyValueString("tickColor/value",value.name());
+    privateData->setKeyValueString(TICK_COLOR, value.name());
 }
 
-QRect ScreenSaverImage::getTimerRect()
+int ScreenSaverImage::getTimerRect()
 {
-    int w = privateData->getKeyValueInt("tickGeometry/Width");
-    int h = privateData->getKeyValueInt("tickGeometry/Height");
-    if (w <= 0 || h <= 0) {
-        w = 140;
-        h = 40;
-        auto a = QRect(0,0, w,h);
-        setTimerRect(a);
-    }
-
-    return QRect(0,0, w,h);
+    int value = privateData->getKeyValueInt(TICK_SIZE);
+    return value;
 }
 
-void ScreenSaverImage::setTimerRect(const QRect &value)
+void ScreenSaverImage::setTimerRect(const int value)
 {
-    timerRect = value;
-
-    int w = value.width();
-    int h = value.height();
-    privateData->setKeyValueInt("tickGeometry/Width", w);
-    privateData->setKeyValueInt("tickGeometry/Height", h);
+    privateData->setKeyValueInt(TICK_SIZE, value);
 }
 
 void ScreenSaverImage::configChanged()
@@ -140,20 +165,18 @@ void ScreenSaverImage::configChanged()
     privateData->reloadConfig();
     timer->setInterval(privateData->getTimeout());
     animation->setDuration(privateData->getTimeout()-200);
-//    animation->stop();
-    //    showNext();
 }
 
 void ScreenSaverImage::timerStateSet(int v)
 {
-    privateData->setKeyValueInt("tickLocation/state", v);
-    state = ScreenSaverImage::TimerState(v);
+    privateData->setKeyValueInt(TICK_LOCATION, v);
+    timerState = ScreenSaverImage::TimerState(v);
 }
 
 int ScreenSaverImage::timerStateGet()
 {
-    int v = privateData->getKeyValueInt("tickLocation/state");
-    state = ScreenSaverImage::TimerState(v);
+    int v = privateData->getKeyValueInt(TICK_LOCATION);
+    timerState = ScreenSaverImage::TimerState(v);
     return v;
 }
 

@@ -1,4 +1,5 @@
 #include "configpanelwindow.h"
+#include "ui_configpanelwindow.h"
 #include <QApplication>
 #include <QDesktopWidget>
 #include <config.h>
@@ -20,86 +21,46 @@
 #include <QSlider>
 #include <ScreenSaveImage>
 #include <ScreenSaverConfig>
+#include <timedatewidget.h>
 
-ConfigPanelWindow::ConfigPanelWindow(QWidget *parent) : QWidget(parent)
+ConfigPanelWindow::ConfigPanelWindow(QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::ConfigPanelWindow)
   , closePlay(true)
 {
+    ui->setupUi(this);
 
-    QLineEdit *inputDirEdit = new QLineEdit();
-    QPushButton *chooseDirBtn = new QPushButton("选择位置");
     ScreenSaverImage *ssi = new ScreenSaverImage();
+    TimeDateWidget *timeDate = ssi->getTimeDate();
 
-    QSlider *slider = new QSlider(Qt::Horizontal);
-    slider->setMinimum(100);
-    slider->setMaximum(10000);
-    slider->setSingleStep(100);
-    slider->setFocus();
-    QLabel *sliderSpeedLab = new QLabel();
+    ui->comb->setCurrentIndex(ssi->timerStateGet());
 
-    QGroupBox *box = new QGroupBox("屏保配置");
-    QGridLayout *boxLayout = new QGridLayout(box);
+    QLineEdit *inputDirEdit = ui->inputDirEdit;
+    QPushButton *chooseDirBtn = ui->chooseDirBtn;
+    QSlider *sliderSpeed = ui->sliderSpeed;
+    QLabel *sliderSpeedLab = ui->sliderSpeedLab;
 
-    int index = 0;
-    boxLayout->addWidget(new QLabel("图片位置:"),index,0);
-    boxLayout->addWidget(inputDirEdit, index,1);
-    boxLayout->addWidget(chooseDirBtn, index,2);
-    index++;
-    boxLayout->addWidget(new QLabel("切换速度:"), index, 0);
-    boxLayout->addWidget(slider, index, 1);
-    boxLayout->addWidget(sliderSpeedLab, index, 2);
+    QComboBox *comb = ui->comb;
+    QSlider *sliderSize = ui->sliderSize;
+    QPushButton *colorBtn = ui->colorBtn;
 
-    // QSlider *sliderx = new QSlider(Qt::Horizontal);
-    // QSlider *slidery = new QSlider(Qt::Horizontal);
-    // QSlider *sliderw = new QSlider(Qt::Horizontal);
-    // QSlider *sliderh = new QSlider(Qt::Horizontal);
+    QSlider *sliderShadow = ui->sliderShadow;
+    QSlider *sliderShadowRadius = ui->sliderShadowRadius;
 
-    QComboBox *comb = new QComboBox();
-    // comb->addItem("")
-    comb->addItem("左上", ScreenSaverImage::TimerState::TopLeft);
-    comb->addItem("中上", ScreenSaverImage::TimerState::TopCenter);
-    comb->addItem("右上", ScreenSaverImage::TimerState::TopRight);
-    comb->addItem("左"  , ScreenSaverImage::TimerState::Left);
-    comb->addItem("中"  , ScreenSaverImage::TimerState::Center);
-    comb->addItem("右"  , ScreenSaverImage::TimerState::Right);
-    comb->addItem("左下", ScreenSaverImage::TimerState::BottomLeft);
-    comb->addItem("中下", ScreenSaverImage::TimerState::BottomCenter);
-    comb->addItem("右下", ScreenSaverImage::TimerState::BottomRight);
-    comb->setCurrentIndex(ssi->timerStateGet());
 
-    index++;
-    boxLayout->addWidget(new QLabel("时钟位置:"), index, 0);
-    boxLayout->addWidget(comb, index, 1);
-
-    QSlider *sliderSize = new QSlider(Qt::Horizontal);
-    sliderSize->setRange(1,300);
-    QPushButton *colorBtn = new QPushButton;
-
-    QHBoxLayout *sliderLayout = new QHBoxLayout;
-    sliderLayout->addWidget(sliderSize);
-    sliderLayout->addWidget(colorBtn);
-    boxLayout->addLayout(sliderLayout, index, 2);
-
-    QGroupBox *previewBox = new QGroupBox("屏保预览");
-    QVBoxLayout *previewBoxLayout = new QVBoxLayout(previewBox);
-    previewBoxLayout->addWidget(ssi);
-    previewBox->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+    QGroupBox *previewBox = ui->previewBox;
+    previewBox->layout()->addWidget(ssi);
+    previewBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     QWidget *widget = this;
-    QVBoxLayout *layout = new QVBoxLayout(widget);
-    layout->addWidget(box);
-    layout->addWidget(previewBox);
-    layout->setAlignment(Qt::AlignTop);
-
     widget->setMinimumSize(700, 550);
     widget->setWindowOpacity(0);
     widget->show();
 
     QObject::connect(sliderSize, &QAbstractSlider::valueChanged, widget, [=](int val){
-        int w = 140 + (val *(140/40));
-        int h = 40 + val;
-        ssi->setTimerRect(QRect(0,0,w,h));
+        ssi->setTimerRect(val);
     });
-    sliderSize->setValue(ssi->getTimerRect().height() - 40);
+    sliderSize->setValue(ssi->getTimerRect());
 
     QObject::connect(colorBtn, &QPushButton::clicked, widget, [=](){
         QColor defaultColor = QColor("#008B8B");
@@ -137,13 +98,22 @@ ConfigPanelWindow::ConfigPanelWindow(QWidget *parent) : QWidget(parent)
         }
     });
 
-    QObject::connect(slider, &QAbstractSlider::valueChanged, widget, [=](int val){
+    QObject::connect(sliderSpeed, &QAbstractSlider::valueChanged, widget, [=](int val){
         ScreenSaverConfig().setTimeout(val);
         ssi->configChanged();
         sliderSpeedLab->setText(QString("当前速度: %1 秒").arg(val/1000.0));
     });
+    sliderSpeed->setValue(ScreenSaverConfig().getTimeout());
 
-    slider->setValue(ScreenSaverConfig().getTimeout());
+    QObject::connect(sliderShadow, &QAbstractSlider::valueChanged, widget, [=](int val){
+        ssi->setTimeShadowDeep(val);
+    });
+    sliderShadow->setValue(ssi->getTimeShadowDeep());
+
+    QObject::connect(sliderShadowRadius, &QAbstractSlider::valueChanged, widget, [=](int val){
+        ssi->setTimeShadowBlurRadius(val);
+    });
+    sliderShadowRadius->setValue(ssi->getTimeShadowBlurRadius());
 
     QPropertyAnimation *animation = new QPropertyAnimation(widget, "windowOpacity");
     animation->setEasingCurve(QEasingCurve::OutQuart);
@@ -164,24 +134,24 @@ ConfigPanelWindow::ConfigPanelWindow(QWidget *parent) : QWidget(parent)
     });
 
 // QObject::connect(sliderx, &QSlider::valueChanged, widget, [=](int val){
-//     QRect rect = ssi->number->rect();
+//     QRect rect = ssi->m_timeDateWidget->rect();
 //     rect.setX(val);
-//     ssi->number->setGeometry(rect);
+//     ssi->m_timeDateWidget->setGeometry(rect);
 // });
 // QObject::connect(slidery, &QSlider::valueChanged, widget, [=](int val){
-//     QRect rect = ssi->number->rect();
+//     QRect rect = ssi->m_timeDateWidget->rect();
 //     rect.setY(val);
-//     ssi->number->setGeometry(rect);
+//     ssi->m_timeDateWidget->setGeometry(rect);
 // });
 // QObject::connect(sliderw, &QSlider::valueChanged, widget, [=](int val){
-//     QRect rect = ssi->number->rect();
+//     QRect rect = ssi->m_timeDateWidget->rect();
 //     rect.setWidth(val);
-//     ssi->number->setGeometry(rect);
+//     ssi->m_timeDateWidget->setGeometry(rect);
 // });
 // QObject::connect(sliderh, &QSlider::valueChanged, widget, [=](int val){
-//     QRect rect = ssi->number->rect();
+//     QRect rect = ssi->m_timeDateWidget->rect();
 //     rect.setHeight(val);
-//     ssi->number->setGeometry(rect);
+//     ssi->m_timeDateWidget->setGeometry(rect);
 // });
 
 }
