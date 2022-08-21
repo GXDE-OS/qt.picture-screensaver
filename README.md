@@ -4,8 +4,8 @@
 
 ## 屏保演示
 
-* 在配置好屏幕保护设置后，执行 `deepin-screensaver` 即可立即预览屏保效果\
-    ![](resources/screenshots/source.png)
+* 在配置好屏幕保护设置后，执行 `deepin-screensaver` 即可立即预览屏保效果
+    ![](resources/screenshots/screenshot4.png)
 
 ## 构建说明
 
