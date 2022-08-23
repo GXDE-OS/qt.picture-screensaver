@@ -1,7 +1,7 @@
 
 cmake_minimum_required(VERSION 3.5.1)
 
-project(picture-screensaver VERSION 0.0.2)
+project(picture-screensaver VERSION 0.0.3)
 
 include(cmake/SparkEnvConfig.cmake)         # 设置一些有关QT构建的开关
 include(cmake/SparkFindQt5Config.cmake)     # 提供了 target_link_qt5 用于目标链接 qt5 的库
