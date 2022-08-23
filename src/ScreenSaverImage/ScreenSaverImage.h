@@ -18,6 +18,7 @@ QT_END_NAMESPACE
 #define TICK_LOCATION    "tickLocation/state"
 #define TICK_SHADOW_DEEP "tickShadow/Deep"
 #define TICK_SHADOW_BLUR "tickShadow/Blur"
+#define TICK_VISIBLE     "tickVisible/value"
 
 class ScreenSaverImage : public QWidget
 {
@@ -57,6 +58,9 @@ public:
     int getTimeShadowBlurRadius() const;
     void setTimeShadowBlurRadius(int value);
 
+    bool getTimerVisible() const;
+    void setTimerVisible(bool value);
+
 private slots:
     void showNext();
 
@@ -68,6 +72,7 @@ private:
     QPixmap currentPixmap;
     QPixmap nextPixmap;
 
+    bool timerVisible;
     QRect timerRect;
     QColor timerColor;
     TimerState timerState;

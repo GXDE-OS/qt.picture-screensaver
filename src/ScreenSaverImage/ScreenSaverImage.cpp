@@ -17,6 +17,7 @@
 ScreenSaverImage::ScreenSaverImage(QWidget *parent) : QWidget(parent)
   ,timer(new QTimer)
   ,privateData(new ScreenSaverConfig)
+  ,timerVisible(privateData->getKeyValueInt(TICK_VISIBLE))
   ,timerState(TimerState::Center)
   ,timeShadowDeep(privateData->getKeyValueInt(TICK_SHADOW_DEEP))
   ,timeShadowBlurRadius(privateData->getKeyValueInt(TICK_SHADOW_BLUR))
@@ -55,7 +56,11 @@ ScreenSaverImage::ScreenSaverImage(QWidget *parent) : QWidget(parent)
     connect(timeTimer, &QTimer::timeout, this, [=](){
 //        m_timeDateWidget->setFontSize(getTimerRect());
         m_timeDateWidget->setStyleSheet(QString("color: %1").arg(getTimerColor().name()));
-        m_timeDateWidget->show();
+        if (timerVisible) {
+            m_timeDateWidget->show();
+        } else {
+            m_timeDateWidget->hide();
+        }
 
         switch(timerState){
         case TopLeft:
@@ -99,6 +104,18 @@ void ScreenSaverImage::showNext()
     nextPixmap = privateData->nextImage();
 
     animation->start();
+}
+
+bool ScreenSaverImage::getTimerVisible() const
+{
+    int value = privateData->getKeyValueInt(TICK_VISIBLE);
+    return value;
+}
+
+void ScreenSaverImage::setTimerVisible(bool value)
+{
+    timerVisible = value;
+    privateData->setKeyValueInt(TICK_VISIBLE, value);
 }
 
 int ScreenSaverImage::getTimeShadowDeep() const

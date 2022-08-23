@@ -105,6 +105,15 @@ ConfigPanelWindow::ConfigPanelWindow(QWidget *parent) :
     });
     sliderSpeed->setValue(ScreenSaverConfig().getTimeout());
 
+    QObject::connect(ui->timerVisible, &QGroupBox::clicked, widget, [=](){
+        if (ui->timerVisible->isChecked()) {
+            ssi->setTimerVisible(true);
+        } else {
+            ssi->setTimerVisible(false);
+        }
+    });
+    ui->timerVisible->setChecked(ssi->getTimerVisible());
+
     QObject::connect(sliderShadow, &QAbstractSlider::valueChanged, widget, [=](int val){
         ssi->setTimeShadowDeep(val);
     });
