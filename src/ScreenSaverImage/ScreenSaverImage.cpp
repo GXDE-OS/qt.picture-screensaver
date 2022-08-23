@@ -41,12 +41,12 @@ ScreenSaverImage::ScreenSaverImage(QWidget *parent) : QWidget(parent)
     m_timeDateWidget->setShadowDeep(timeShadowDeep);
     m_timeDateWidget->setShadowBlurRadius(timeShadowBlurRadius);
 
-//    connect(m_timeDateWidget, &TimeDateWidget::onShadowDeepChanged, this, [=](int val){
-//        privateData->setKeyValueInt(TICK_SHADOW_DEEP, val);
-//    });
-//    connect(m_timeDateWidget, &TimeDateWidget::onShadowBlurChanged, this, [=](int val){
-//        privateData->setKeyValueInt(TICK_SHADOW_BLUR, val);
-//    });
+    connect(m_timeDateWidget, &TimeDateWidget::onShadowDeepChanged, this, [=](int val){
+        privateData->setKeyValueInt(TICK_SHADOW_DEEP, val);
+    });
+    connect(m_timeDateWidget, &TimeDateWidget::onShadowBlurChanged, this, [=](int val){
+        privateData->setKeyValueInt(TICK_SHADOW_BLUR, val);
+    });
 
     QTimer *timeTimer = new QTimer();
     timeTimer->start(1000);
