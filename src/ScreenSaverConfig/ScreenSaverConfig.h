@@ -9,21 +9,13 @@
 QT_BEGIN_NAMESPACE
 
 QT_END_NAMESPACE
-class ScreenSaverConfig : public QObject
+#include "BaseConfig"
+class ScreenSaverConfig : public BaseConfig
 {
     Q_OBJECT
 public:
     explicit ScreenSaverConfig(QObject *parent=nullptr);
-    void reloadConfig();
-
-    void setImageDirPath(QString imageDirPath);
-    QString getImageDirPath();
-
-    void setTimeout(int timeout);
-    int getTimeout();
-
-    void setOrder(bool order);
-    bool getOrder();
+//    void reloadConfig();
 
     void reloadFilePaths();
     void loadFilePaths();
@@ -31,16 +23,8 @@ public:
     QPixmap nextImage();
     QPixmap nextRandomImage();
 
-    int getKeyValueInt(QString key);
-    void setKeyValueInt(QString key, int val);
-
-    QString getKeyValueString(QString key);
-    void setKeyValueString(QString key, QString value);
-
 private:
     int indexImagePath = 0;
-
-    QSettings m_config;
 
     QString currentDir;
     QStringList filePaths;

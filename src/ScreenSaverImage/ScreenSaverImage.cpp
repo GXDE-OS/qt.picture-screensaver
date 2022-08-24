@@ -16,20 +16,20 @@
 
 ScreenSaverImage::ScreenSaverImage(QWidget *parent) : QWidget(parent)
   ,timer(new QTimer)
-  ,privateData(new ScreenSaverConfig)
-  ,timerVisible(privateData->getKeyValueInt(TICK_VISIBLE))
+  ,config(new ScreenSaverConfig)
+  ,timerVisible(config->Visible())
   ,timerState(TimerState::Center)
-  ,timeShadowDeep(privateData->getKeyValueInt(TICK_SHADOW_DEEP))
-  ,timeShadowBlurRadius(privateData->getKeyValueInt(TICK_SHADOW_BLUR))
+  ,timeShadowDeep(config->ShadowDeep())
+  ,timeShadowBlurRadius(config->shadowBlur())
 {
 
     animation = new QPropertyAnimation(this, "ImageOpacity");
-    animation->setDuration(privateData->getTimeout() - 200);
+    animation->setDuration(config->Timeout() - 200);
     animation->setEasingCurve(QEasingCurve::InOutQuart);
     animation->setStartValue(1.0);
     animation->setEndValue(0.0);
 
-    timer->setInterval(privateData->getTimeout());
+    timer->setInterval(config->Timeout());
     connect(timer, &QTimer::timeout, this, &ScreenSaverImage::showNext);
 
     connect(animation, SIGNAL(valueChanged(const QVariant&)), this, SLOT(update()));
@@ -43,10 +43,10 @@ ScreenSaverImage::ScreenSaverImage(QWidget *parent) : QWidget(parent)
     m_timeDateWidget->setShadowBlurRadius(timeShadowBlurRadius);
 
     connect(m_timeDateWidget, &TimeDateWidget::onShadowDeepChanged, this, [=](int val){
-        privateData->setKeyValueInt(TICK_SHADOW_DEEP, val);
+        config->setShadowDeep(val);
     });
     connect(m_timeDateWidget, &TimeDateWidget::onShadowBlurChanged, this, [=](int val){
-        privateData->setKeyValueInt(TICK_SHADOW_BLUR, val);
+        config->setshadowBlur(val);
     });
 
     QTimer *timeTimer = new QTimer();
@@ -101,26 +101,26 @@ void ScreenSaverImage::showNext()
     timer->stop();
 
     currentPixmap = nextPixmap;
-    nextPixmap = privateData->nextImage();
+    nextPixmap = config->nextImage();
 
     animation->start();
 }
 
 bool ScreenSaverImage::getTimerVisible() const
 {
-    int value = privateData->getKeyValueInt(TICK_VISIBLE);
+    int value = config->Visible();
     return value;
 }
 
 void ScreenSaverImage::setTimerVisible(bool value)
 {
     timerVisible = value;
-    privateData->setKeyValueInt(TICK_VISIBLE, value);
+    config->setVisible(value);
 }
 
 int ScreenSaverImage::getTimeShadowDeep() const
 {
-    int value = privateData->getKeyValueInt(TICK_SHADOW_DEEP);
+    int value = config->ShadowDeep();
     return value;
 }
 
@@ -132,7 +132,7 @@ void ScreenSaverImage::setTimeShadowDeep(int value)
 
 int ScreenSaverImage::getTimeShadowBlurRadius() const
 {
-    int value = privateData->getKeyValueInt(TICK_SHADOW_BLUR);
+    int value = config->shadowBlur();
     return value;
 }
 
@@ -154,7 +154,7 @@ void ScreenSaverImage::setTimeDate(TimeDateWidget *timeDateWidget)
 
 QColor ScreenSaverImage::getTimerColor() const
 {
-    QString value = privateData->getKeyValueString(TICK_COLOR);
+    QString value = config->Color();
     if (value.isEmpty()) {
         value = "#414D68";
     }
@@ -163,36 +163,36 @@ QColor ScreenSaverImage::getTimerColor() const
 
 void ScreenSaverImage::setTimerColor(const QColor &value)
 {
-    privateData->setKeyValueString(TICK_COLOR, value.name());
+    config->setColor(value.name());
 }
 
 int ScreenSaverImage::getTimerRect()
 {
-    int value = privateData->getKeyValueInt(TICK_SIZE);
-    return value;
+    // int value = config->getKeyValueInt(TICK_SIZE);
+    return 0;
 }
 
 void ScreenSaverImage::setTimerRect(const int value)
 {
-    privateData->setKeyValueInt(TICK_SIZE, value);
+    // config->setKeyValueInt(TICK_SIZE, value);
 }
 
 void ScreenSaverImage::configChanged()
 {
-    privateData->reloadConfig();
-    timer->setInterval(privateData->getTimeout());
-    animation->setDuration(privateData->getTimeout()-200);
+    // config->reloadConfig();
+    timer->setInterval(config->Timeout());
+    animation->setDuration(config->Timeout()-200);
 }
 
 void ScreenSaverImage::timerStateSet(int v)
 {
-    privateData->setKeyValueInt(TICK_LOCATION, v);
+    config->setLocation(config->LocationIndexToString(v));
     timerState = ScreenSaverImage::TimerState(v);
 }
 
 int ScreenSaverImage::timerStateGet()
 {
-    int v = privateData->getKeyValueInt(TICK_LOCATION);
+    int v = config->LocationToIndex(config->Location());
     timerState = ScreenSaverImage::TimerState(v);
     return v;
 }

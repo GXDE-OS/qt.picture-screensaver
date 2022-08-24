@@ -80,10 +80,10 @@ ConfigPanelWindow::ConfigPanelWindow(QWidget *parent) :
     colorBtn->setStyleSheet(QString("background-color: %1").arg(ssi->getTimerColor().name()));
 
 
-    inputDirEdit->setText(ScreenSaverConfig().getImageDirPath());
+    inputDirEdit->setText(ScreenSaverConfig().Path());
     QObject::connect(inputDirEdit, &QLineEdit::textChanged, widget, [=](const QString &path){
         if (inputDirEdit->text().isEmpty()) return;
-        ScreenSaverConfig().setImageDirPath(path);
+        ScreenSaverConfig().setPath(path);
         ssi->configChanged();
     });
 
@@ -103,7 +103,7 @@ ConfigPanelWindow::ConfigPanelWindow(QWidget *parent) :
         ssi->configChanged();
         sliderSpeedLab->setText(QString("当前速度: %1 秒").arg(val/1000.0));
     });
-    sliderSpeed->setValue(ScreenSaverConfig().getTimeout());
+    sliderSpeed->setValue(ScreenSaverConfig().Timeout());
 
     QObject::connect(ui->timerVisible, &QGroupBox::clicked, widget, [=](){
         if (ui->timerVisible->isChecked()) {

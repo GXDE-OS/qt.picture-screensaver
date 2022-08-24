@@ -65,9 +65,9 @@ private slots:
     void showNext();
 
 private:
-    ScreenSaverConfig *privateData;
-    QPropertyAnimation *animation;
     QTimer *timer;
+    ScreenSaverConfig *config;
+    QPropertyAnimation *animation;
 
     QPixmap currentPixmap;
     QPixmap nextPixmap;

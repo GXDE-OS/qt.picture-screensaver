@@ -7,53 +7,23 @@
 #include <QTextStream>
 #include <QRandomGenerator>
 
-ScreenSaverConfig::ScreenSaverConfig(QObject *parent) : QObject(parent)
- , m_config("picture-screensaver", "Config")
+ScreenSaverConfig::ScreenSaverConfig(QObject *parent) : BaseConfig(parent)
  , currentDir("")
-// , indexImagePath(-1)
  , m_default_pixmap(QPixmap("://default.jpeg"))
 {
     // 清除无效配置：例如目录值非空但不存在
-    QString dir = getImageDirPath();
-    if (!dir.isEmpty() && !QFileInfo(dir).exists()) {
-        setImageDirPath("");
-        qDebug() << "image 含有无效配置(已清除)\n";
-    }
+    // if (!dir.isEmpty() && !QFileInfo(dir).exists()) {
+    //     setImageDirPath("");
+    //     qDebug() << "image 含有无效配置(已清除)\n";
+    // }
 
-    if (getTimeout() < 100) {
-        setTimeout(100);
-    }
+    // if (getTimeout() < 100) {
+    //     setTimeout(100);
+    // }
 
-    currentDir = getImageDirPath();
+    currentDir = Path();
 
     reloadFilePaths();
-}
-
-void ScreenSaverConfig::reloadConfig()
-{
-    m_config.sync();
-    reloadFilePaths();
-}
-
-void ScreenSaverConfig::setImageDirPath(QString imageDirPath) {
-    m_config.setValue("image/path", imageDirPath);
-}
-QString ScreenSaverConfig::getImageDirPath() {
-    return m_config.value("image/path").toString();
-}
-
-void ScreenSaverConfig::setTimeout(int timeout) {
-    m_config.setValue("image/timeout", timeout);
-}
-int ScreenSaverConfig::getTimeout() {
-    return m_config.value("image/timeout").toInt();
-}
-
-void ScreenSaverConfig::setOrder(bool order) {
-    m_config.setValue("image/order", order);
-}
-bool ScreenSaverConfig::getOrder() {
-    return m_config.value("image/order").toBool();
 }
 
 void ScreenSaverConfig::reloadFilePaths()
@@ -64,13 +34,13 @@ void ScreenSaverConfig::reloadFilePaths()
 
 void ScreenSaverConfig::loadFilePaths()
 {
-    QDir dir(getImageDirPath());
+    QDir dir(Path());
 
     QFileInfoList entrys = dir.entryInfoList();
     for (QFileInfo entry : entrys) {
         if (entry.isFile()) {
             filePaths.append(entry.filePath());
-            QTextStream(stdout) << entry.filePath() << "\n";
+//            QTextStream(stdout) << entry.filePath() << "\n";
         }
 
     }
@@ -142,22 +112,3 @@ QPixmap ScreenSaverConfig::nextRandomImage()
     return nextImage();
 }
 
-int ScreenSaverConfig::getKeyValueInt(QString key)
-{
-    return m_config.value(key).toInt();
-}
-
-void ScreenSaverConfig::setKeyValueInt(QString key, int val)
-{
-    m_config.setValue(key, val);
-}
-
-QString ScreenSaverConfig::getKeyValueString(QString key)
-{
-    return m_config.value(key).toString();
-}
-
-void ScreenSaverConfig::setKeyValueString(QString key, QString value)
-{
-    m_config.setValue(key, value);
-}
