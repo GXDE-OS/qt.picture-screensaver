@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+    <enum id="com.gitee.zinface.picture-screensaver.TickLocation">
+        <value value="0" nick="TopLeft" />
+        <value value="1" nick="TopCenter" />
+        <value value="2" nick="TopRight" />
+        <value value="3" nick="Left" />
+        <value value="4" nick="Center" />
+        <value value="5" nick="Right" />
+        <value value="6" nick="BottomLeft" />
+        <value value="7" nick="BottomCenter" />
+        <value value="8" nick="BottomRight" />
+    </enum>
+
+    <schema path="/com/gitee/zinface/picture-screensaver/" id="com.gitee.zinface.picture-screensaver">
+        <key type="s" name="image-path">
+            <default>''</default>
+            <summary>图片配置路径</summary>
+            <description>动画图片屏保的图片配置路径</description>
+        </key>
+        <key type="i" name="image-timeout">
+            <default>1500</default>
+            <summary>切换速度</summary>
+            <description>动画图片屏保的图片切换速度</description>
+        </key>
+        <key type="b" name="tick-visible">
+            <default>false</default>
+            <summary>时钟可见</summary>
+            <description>动画图片屏保的时钟可见性</description>
+        </key>
+        <key name="tick-location" enum="com.gitee.zinface.picture-screensaver.TickLocation">
+            <default>'TopCenter'</default>
+            <summary>时钟位置</summary>
+            <description>动画图片屏保的时钟位置</description>
+        </key>
+        <key type="s" name="tick-color">
+            <default>'#FFFFFF'</default>
+            <summary>时钟颜色</summary>
+            <description>动画图片屏保的时钟颜色</description>
+        </key>
+        <key type="i" name="tick-shadow-deep">
+            <default>248</default>
+            <summary>时钟阴影</summary>
+            <description>动画图片屏保的时钟阴影</description>
+        </key>
+        <key type="i" name="tick-shadow-blur">
+            <default>0</default>
+            <summary>阴影厚度</summary>
+            <description>动画图片屏保的时钟阴影厚度</description>
+        </key>
+    </schema>
+</schemalist>
