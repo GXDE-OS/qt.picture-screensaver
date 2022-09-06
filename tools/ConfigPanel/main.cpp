@@ -18,10 +18,7 @@
 #include <ScreenSaveImage>
 #include <ScreenSaverConfig>
 
-void moveCenter(QWidget &wm) {
-    QDesktopWidget *desktop = QApplication::desktop();
-    wm.move((desktop->width() - wm.width()) /2,(desktop->height() - wm.height()) /2);
-}
+#include <ScreenUtils>
 
 int main(int argc, char *argv[])
 {
@@ -30,7 +27,18 @@ int main(int argc, char *argv[])
 
     ConfigPanelWindow window;
     window.show();
-    moveCenter(window);
+
+    // 移动到鼠标所在的屏幕中心
+    ScreenUtils::moveCenterForCursor(window);
+
+    // QRect firstRect = window.screen()->availableGeometry();
+    // QTextStream(stdout) << "> "
+    //                     << "ScreenX: " << firstRect.x() << "\n"
+    //                     << "ScreenY: " << firstRect.y() << "\n"
+    //                     << "ScreenWidth: " << firstRect.width() << "\n"
+    //                     << "ScreenHeight: " << firstRect.height() << "\n"
+    //                  q   << "CursorX: " << QCursor::pos().x() << "\n"
+    //                     << "CursorY: " << QCursor::pos().y() << "\n";
 
     return a.exec();
 }

@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.5.1)
 
 set(QRCS resources/sources.qrc)
 
+# 一个简单的屏幕位置工具库
+spark_add_libraries_path(ScreenUtils utils/ScreenUtils)
+target_link_qt5(ScreenUtils)
+
 # 使用 GSettings-Qt 进行实现 gsettings 配置
 spark_find_library(qgsettings gsettings-qt)
 spark_add_libraries_path(BaseConfig src/BaseConfig)
@@ -27,6 +31,7 @@ target_link_TimeDateWidget(ScreenSaverImage)
 spark_add_executable_path(${PROJECT_NAME} 
     src ${QRCS})
 target_link_ScreenSaverImage(${PROJECT_NAME})
+target_link_ScreenUtils(${PROJECT_NAME})
 
 # 4. 配置面板程序，提供配置屏保的面板，以及预览屏保的功能
     # 依赖 ScreenSaverImage 提供的预览图片功能
@@ -35,3 +40,4 @@ spark_add_executable_path(picture-screensaver-config-panel
     tools/ConfigPanel
     ${QRCS})
 target_link_ScreenSaverImage(picture-screensaver-config-panel)
+target_link_ScreenUtils(picture-screensaver-config-panel)
